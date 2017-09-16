@@ -63,20 +63,52 @@
 </head>
 <body onload="changeData()">
 
-<h3>CS-6630 Homework 3</h3>
+<h3>CS-6630 Homework</h3>
 <address>
     <span>Yanyan Zhang</span>
     <span>u1127804@utah.edu</span>
     <span>ID: 1127804</span>
 </address>
 <br>
-<hr>
+All data used for the following two sections can be found
+<a href="https://github.com/yanyanzhangUU/Sample_YanyanZhang/tree/gh-pages/data/">here</a>.
 <br>
-
+<hr>
+<p>
+Goal: Given data [{
+"name":"Animal",
+"parent":"root"
+},
+{
+"name":"Reptile",
+"parent":"Animal"
+},
+{
+"name":"Mammal",
+"parent":"Animal"
+},...], create a tree that represents the data.
+See <a href="https://github.com/yanyanzhangUU/Sample_YanyanZhang/tree/gh-pages/data/Tree.json">Tree.json</a> for the complete data.
+</p>
 <svg height="1200" width="1200"> </svg>
 
 <br>
 <hr>
+<p>
+Goals:
+<ul>
+    <li>Create a button called Staircase. By clicking it, the first bar chart is replaced by a staircase.</li>
+    <li>Create a select menu. When one option is selected, the corresponding data in
+        <a href="https://github.com/yanyanzhangUU/Sample_YanyanZhang/tree/gh-pages/data/">data</a>/*.csv are used
+        to draw the charts. If you hover your mouse over a bar in the bar charts, the bar will change color
+        and its x and y coordiates will show up in a tooltip. If you click a dot in the scatterplot, its x and y coordiates
+        will be logged to the console.</li>
+    <li>Create a check box. When it is unchecked, all data in the selected dataset are shown. When it is checked, a random subset of the selected dataset is shown.</li>
+    <li>Sizes of all charts are adjusted so that each chart fits nicely into its own display block based on data.
+        Another extra thing is that transition of the bar charts and the scatterplot from a previous status to a new
+        status is set to be finished in 3 seconds.</li>
+</ul>
+</p>
+<br>
 <br>
 
 <span>
