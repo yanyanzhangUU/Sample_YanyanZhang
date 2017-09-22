@@ -1,3 +1,54 @@
+.barChart {
+    fill: steelblue;
+    stroke: darkgray;
+    stroke-width: 1px;
+}
+
+.lines {
+    stroke: steelblue;
+    fill: none
+}
+
+.areas {
+    stroke: none;
+    fill: steelblue
+}
+
+circle {
+    fill: steelblue;
+}
+
+.frame {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+}
+
+line{
+    stroke:darkGrey;
+    stroke-width:6;
+}
+
+.label{
+    fill:white;
+    font-weight: bold;
+    text-anchor: middle;
+    font-size: 16px;
+    letter-spacing: 3px;
+}
+
+/* Styles that clean up the layout;
+ * you can ignore these */
+.div2 {
+    display: inline-block;
+    border: 1px solid lightgray;
+    margin: 1em;
+}
+
+div, span {
+    padding: 1em;
+}
+
 
 .countries {
     stroke: #f7f7f7;
