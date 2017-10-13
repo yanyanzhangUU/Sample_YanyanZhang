@@ -197,7 +197,7 @@ function update(error, data) {
  * Load the file indicated by the select menu
  */
 function changeData() {
-    let dataFile = document.getElementById('dataset').value;
+    let dataFile = document.getElementById('dataset0').value;
     if (document.getElementById('random').checked) {
         randomSubset();
     }
@@ -210,7 +210,7 @@ function changeData() {
  *   Load the file indicated by the select menu, and then slice out a random chunk before passing the data to update()
  */
 function randomSubset() {
-    let dataFile = document.getElementById('dataset').value;
+    let dataFile = document.getElementById('dataset0').value;
     if (document.getElementById('random').checked) {
         d3.csv('data/' + dataFile + '.csv', function (error, data) {
             let subset = [];

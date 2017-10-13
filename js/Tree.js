@@ -1,141 +1,94 @@
-/** Class representing a Tree. */
+/** Class implementing the tree view. */
 class Tree {
-	/**
-	 * Creates a Tree Object
-	 * parentNode, children, parentName,level,position
-	 * @param {json[]} json - array of json object with name and parent fields
-	 */
+    /**
+     * Creates a Tree Object
+     */
+    constructor() {
+        
+    }
 
-	constructor(json) {
-		var tmpP=[];
-        this.nodes=[];
+    /**
+     * Creates a node/edge structure and renders a tree layout based on the input data
+     *
+     * @param treeData an array of objects that contain parent/child information.
+     */
+    createTree(treeData) {
 
-		for (var i=0;i<json.length;i++) {
-		    var currentNode=new Node(json[i].name,json[i].parent);
-		    this.nodes.push(currentNode);
-		    tmpP.push(json[i].name);
-        }
+        // ******* TODO: PART VI *******
 
-        for (i=1;i<json.length;i++) {
-            currentNode=this.nodes[i];
-            currentNode.parentNode=this.nodes[tmpP.indexOf(currentNode.parentName)];
-        }
-	}
+        //Create a tree and give it a size() of 800 by 300. 
+        let treemap=d3.tree().size([800,400]);
 
-	/**
-	 * Function that builds a tree from a list of nodes with parent refs
-	 */
-	buildTree() {
-        for (var i=1;i<this.nodes.length;++i) {
-            let currentNode=this.nodes[i];
-           // console.log("current node -- "+currentNode.name+" parent name --- "+currentNode.parentNode.name);
-            currentNode.parentNode.addChild(currentNode);
-        }
-        //Assign Positions and Levels by making calls to assignPosition() and assignLevel()
-        this.assignLevel(this.nodes[0],0);
-        this.assignPosition(this.nodes[0],0);
-	}
+        //Create a root for the tree using d3.stratify();
+        let root=d3.stratify()
+            .id((d,i)=>i)
+            .parentId(d=>d.ParentGame)   //ParentGame is from ...
+            (treeData);
+        
+        //Add nodes and links to the tree. 
+        let nodes=d3.hierarchy(root,d=>d.children);
+        nodes=treemap(nodes);
+        let xshift=80;
+        let links=d3.select("#tree").selectAll(".linkf")
+            .data(nodes.descendants().slice(1))
+            .enter().append("path")
+            .attr("d",d=> ("M" + (d.y+xshift) + "," + d.x
+                + "C" + (d.y + d.parent.y+xshift) / 2 + "," + d.x
+                + " " + (d.y + d.parent.y+xshift) / 2 + "," + d.parent.x
+                + " " + (d.parent.y+xshift) + "," + d.parent.x))
+            .attr("class",function (d) {
+                return d.data.data.Team === d.parent.data.data.Team ?
+                    "linkf "+ d.data.data.Team + " "+d.data.data.Team+d.data.data.Opponent:
+                    "linkf "+d.data.data.Team+d.parent.data.data.Team;
+            });
+        let node=d3.select("#tree").selectAll(".node")
+            .data(nodes.descendants())
+            .enter().append("g")
+            .attr("transform", function(d) {
+                return "translate(" + (d.y+xshift) + "," + d.x + ")"; });  //?? to check
 
-	/**
-	 * Recursive function that assign positions to each node
-	 */
-	assignPosition(node, position) {
-        if (node!= null) {
-            node.position=position;
-            var child;
-            for (child of node.children) {
-                var l=child.level;
-                var maxP=-1;
-                for (var i=0;i<this.nodes.length;i++) {
-                    var currentNode=this.nodes[i];
-                    if (currentNode.level===l && currentNode.position>maxP) {
-                        maxP=currentNode.position;
-                    }
-                }
-                this.assignPosition(child,Math.max(child.parentNode.position,maxP+1));
-            }
-        }
-	}
+        node.append("circle").attr("r",5)
+            .attr("class",function (d) {
+                return d.data.data.Wins==="1"? "winnerCircle":"nodeCircle";
+            });
+        node.append("text")
+            .attr("dy", ".35em")
+            .attr("x", function(d) { return d.children ? -13 : 13; })
+            .style("text-anchor", function(d) {
+                return d.children ? "end" : "start"; })
+            .text(function(d) { return d.data.data.Team; })
+            .attr("class",d=>d.data.data.Team+"Text"+" "+d.data.data.Team+d.data.data.Opponent+"Text");
+    };
 
-	/**
-	 * Recursive function that assign levels to each node
-	 */
-	assignLevel(node, level) {
-        if (node!= null) {
-            node.level = level;
-            var child;
-            //console.log("assignLevel ");
 
-            for (child of node.children) {
-                //console.log("child"+child.name);
-                this.assignLevel(child, level + 1);
-            }
+    /**
+     * Updates the highlighting in the tree based on the selected team.
+     * Highlights the appropriate team nodes and labels.
+     *
+     * @param row a string specifying which team was selected in the table.
+     */
+    updateTree(row) {
+        // ******* TODO: PART VII *******
+        this.clearTree();
+        // console.log("the highlighted ", row.value.type, row.key, row);
+        if (row.value.type==="aggregate") {
+            d3.selectAll("."+row.key).classed("selectedf",true);
+            d3.selectAll("."+row.key+"Text").classed("selectedLabel",true);
+        } else {
+            d3.selectAll("."+row.key+row.value.Opponent).classed("selectedf",true);
+            d3.selectAll("."+row.value.Opponent+row.key).classed("selectedf",true);
+            d3.selectAll("."+row.key+row.value.Opponent+"Text").classed("selectedLabel",true);
+            d3.selectAll("."+row.value.Opponent+row.key+"Text").classed("selectedLabel",true);
         }
     }
 
-     /**   assignLevel(node) {  //this works too
-        var lv=0;
-        var nodeP=node;
-        while (nodeP.parentName!="root") {
-           nodeP=node.parentNode;
-           lv+=1;
-        }
-        node.level=lv;
-	}*/
-	/**
-	 * Function that renders the tree
-	 */
-	renderTree() {
-        var svg=d3.select("svg");
-        console.info(this.nodes);
-        svg.selectAll("line")
-            .data(this.nodes)
-            .enter().append("line")
-            .attr("x1",function (d) {
-                if (d.parentNode!=null) {
-                    return d.parentNode.level*250+150;
-                } else {
-                    return d.level*250+150;
-                }
-            })
-            .attr("y1",function (d) {
-                if (d.parentNode!=null) {
-                    return d.parentNode.position*150+150;
-                } else {
-                    return d.position*150+150;
-                }
-            })
-            .attr("x2",function (d) {
-                return d.level*250+150;
-            })
-            .attr("y2",function (d) {
-                return d.position*150+150;
-            });
-
-        svg.selectAll("circle")
-            .data(this.nodes)
-            .enter().append("circle")
-            .attr("cx",function (d) {
-                return d.level*250+150;
-            })
-            .attr("cy",function (d) {
-                return d.position*150+150;
-            })
-            .attr("r",45);
-
-        svg.selectAll("text")
-            .data(this.nodes)
-            .enter().append("text")
-            .attr("x",function (d) {
-                return d.level*250+150;
-            })
-            .attr("y",function (d) {
-                return d.position*150+150;
-            })
-            .text(function (d) {
-                return d.name;
-            })
-            .attr("class","label");
-	}
-		
+    /**
+     * Removes all highlighting from the tree.
+     */
+    clearTree() {
+        // ******* TODO: PART VII *******
+        d3.select("#tree").selectAll(".selectedf").classed("selectedf",false);
+        d3.select("#tree").selectAll(".selectedLabel").classed("selectedLabel",false);
+        // You only need two lines of code for this! No loops! 
+    }
 }
