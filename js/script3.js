@@ -93,7 +93,7 @@ function chooseData() {
     // Changed the selected data when a user selects a different
     // menu item from the drop down.
 
-    let active=d3.select("#dataset").node().value;
+    let active=d3.select("#datasetfr").node().value;
     //console.log("the selected: ",active);
     barChart.updateBarChart(active);
 }
